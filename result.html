@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Result Page</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <h2>Route Information</h2>
+  <div id="resultContainer"></div>
+</div>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<!-- Custom JavaScript -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const responseData = urlParams.get('data');
+    const resultContainer = document.getElementById('resultContainer');
+
+    if (responseData) {
+      const parsedData = JSON.parse(decodeURIComponent(responseData));
+      console.log('Response Data:', parsedData);
+
+      // Display the data on the page
+      Object.keys(parsedData.data).forEach((place, index) => {
+        const placeData = parsedData.data[place];
+        const placeDiv = document.createElement('div');
+        placeDiv.innerHTML = `<h4>${place}</h4>`;
+
+        // Create a paragraph to wrap "Restaurants" and "Hotels" buttons
+        const buttonsParagraph = document.createElement('p');
+
+        if (index < Object.keys(parsedData.data).length - 1) {
+          const restaurantsLink = document.createElement('a');
+          restaurantsLink.href = placeData.restaurants;
+          restaurantsLink.target = '_blank';
+          restaurantsLink.className = 'btn btn-primary mr-2'; // Add Bootstrap button styling
+          restaurantsLink.textContent = 'Restaurants';
+
+          const hotelsLink = document.createElement('a');
+          hotelsLink.href = placeData.hotels;
+          hotelsLink.target = '_blank';
+          hotelsLink.className = 'btn btn-info'; // Add Bootstrap button styling
+          hotelsLink.textContent = 'Hotels';
+
+          buttonsParagraph.appendChild(restaurantsLink);
+          buttonsParagraph.appendChild(hotelsLink);
+        }
+
+        placeDiv.appendChild(buttonsParagraph);
+
+        resultContainer.appendChild(placeDiv);
+      });
+
+      // Display navigation link
+      const navigationLink = document.createElement('p');
+      const navigationLinkAnchor = document.createElement('a');
+      navigationLinkAnchor.href = parsedData.data.navigation_url;
+      navigationLinkAnchor.target = '_blank';
+      navigationLinkAnchor.className = 'btn btn-success'; // Add Bootstrap button styling
+      navigationLinkAnchor.textContent = 'View Navigation';
+      navigationLink.appendChild(navigationLinkAnchor);
+      resultContainer.appendChild(navigationLink);
+    } else {
+      console.error('No response data found.');
+    }
+  });
+</script>
+
+</body>
+</html>
